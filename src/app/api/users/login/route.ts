@@ -21,8 +21,8 @@ export async function POST(request:NextRequest){
         })
        }
 
-       const user = await User.findOne({email}).select("-password")
-
+       const user = await User.findOne({email}).select("+password")
+       console.log(user);
        if(!user){
         return NextResponse.json({
             
@@ -31,7 +31,7 @@ export async function POST(request:NextRequest){
         })
        }
 
-       const isPasswordCorrect = await user.compare(password,user.password);
+       const isPasswordCorrect = await compare(password,user.password);
 
        if(!isPasswordCorrect){
         return NextResponse.json({
@@ -56,8 +56,9 @@ export async function POST(request:NextRequest){
         success:true,
     })
 
-    response.cookies.set("token",token,{httpOnly:true})
-
+    response.cookies.set("token",token,{httpOnly:true,secure: process.env.NODE_ENV === "production",})
+    // console.log(token);
+    // console.log(response);
     return response;
 
     
